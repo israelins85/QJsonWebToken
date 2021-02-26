@@ -516,7 +516,7 @@ QString QJsonWebToken::getToken() const
 	// important to execute first to update m_byteAllData which contains header + "." + payload in base64
 	QByteArray byteSignatureBase64 = getSignatureBase64();
 	// compose token and return it
-	return m_byteAllData + "." + byteSignatureBase64;
+    return QString::fromUtf8(QByteArray(m_byteAllData + "." + byteSignatureBase64));
 }
 
 bool QJsonWebToken::setToken(const QString &strToken)
