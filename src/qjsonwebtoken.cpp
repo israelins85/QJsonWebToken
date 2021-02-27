@@ -284,7 +284,7 @@ QSharedPointer<QJsonWebKey> QJsonWebKey::fromJsonWebKey(const QByteArray &jwk)
 	QJsonDocument doc = QJsonDocument::fromJson(jwk, &error);
 	if (error.error != QJsonParseError::NoError || doc.isNull() || !doc.isObject() || !doc.object().contains("kty"))
 	{
-		return nullptr;
+        return QSharedPointer<QJsonWebKey>();
 	}
 	QJsonObject obj = doc.object();
 	QString type = obj.value("kty").toString("");
@@ -303,7 +303,7 @@ QSharedPointer<QJsonWebKey> QJsonWebKey::fromJsonWebKey(const QByteArray &jwk)
 		QCA::BigInteger q = QCA::SecureArray(fromBase64Url(obj.value("q").toString("")));
 		return QSharedPointer<QJsonWebKeyRSAPrivate>::create(QCA::RSAPrivateKey(n, e, p, q, d));
 #else
-		return nullptr;
+        return QSharedPointer<QJsonWebKey>();
 #endif
 	}
 	else if (type == JWK_ALG_RSA && obj.contains("n") && obj.contains("e"))
@@ -314,13 +314,13 @@ QSharedPointer<QJsonWebKey> QJsonWebKey::fromJsonWebKey(const QByteArray &jwk)
 		QCA::BigInteger e = QCA::SecureArray(fromBase64Url(obj.value("e").toString("")));
 		return QSharedPointer<QJsonWebKeyRSAPublic>::create(QCA::RSAPublicKey(n, e));
 #else
-		return nullptr;
+        return QSharedPointer<QJsonWebKey>();
 #endif
 	}
 	else
 	{
 		// unknown key
-		return nullptr;
+        return QSharedPointer<QJsonWebKey>();
 	}
 }
 
@@ -335,7 +335,7 @@ QSharedPointer<QJsonWebKey> QJsonWebKey::generateRSAPrivateKey(int bits)
 	QCA::PrivateKey key = QCA::KeyGenerator().createRSA(bits);
 	if (key.isNull())
 	{
-		return nullptr;
+        return QSharedPointer<QJsonWebKey>();
 	}
 	return QSharedPointer<QJsonWebKeyRSAPrivate>::create(key);
 }
